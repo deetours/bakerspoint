@@ -157,26 +157,43 @@ export default function MenuPage() {
           <h3 className="text-xl md:text-2xl font-heading font-light">{product.name}</h3>
           <p className="text-base md:text-lg text-muted-foreground font-light">{product.price}</p>
 
-          {hoveredId === product.id && (
-            <p className="text-sm text-muted-foreground font-light animate-fade-in-slow italic">{product.tagline}</p>
-          )}
+          <p 
+            className="text-sm text-muted-foreground font-light italic transition-opacity duration-300"
+            style={{
+              opacity: hoveredId === product.id ? 1 : 0,
+              visibility: hoveredId === product.id ? 'visible' : 'hidden'
+            }}
+          >
+            {product.tagline}
+          </p>
 
-          {product.scarcity && hoveredId === product.id && (
-            <p className="text-xs text-muted-foreground font-light pt-2">Only a few left.</p>
+          {product.scarcity && (
+            <p 
+              className="text-xs text-muted-foreground font-light pt-2 transition-opacity duration-300"
+              style={{
+                opacity: hoveredId === product.id ? 1 : 0,
+                visibility: hoveredId === product.id ? 'visible' : 'hidden'
+              }}
+            >
+              Only a few left.
+            </p>
           )}
         </div>
 
-        {hoveredId === product.id && (
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              addToCart(product)
-            }}
-            className="text-primary font-light hover:text-primary/80 transition-colors text-sm animate-fade-in-slow"
-          >
-            Add to order →
-          </button>
-        )}
+        <button
+          onClick={(e) => {
+            e.preventDefault()
+            addToCart(product)
+          }}
+          className="text-primary font-light hover:text-primary/80 transition-all text-sm"
+          style={{
+            opacity: hoveredId === product.id ? 1 : 0,
+            visibility: hoveredId === product.id ? 'visible' : 'hidden',
+            pointerEvents: hoveredId === product.id ? 'auto' : 'none'
+          }}
+        >
+          Add to order →
+        </button>
       </div>
     </Link>
   )
