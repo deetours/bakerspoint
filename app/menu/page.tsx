@@ -92,7 +92,6 @@ interface CartItem {
 }
 
 export default function MenuPage() {
-  const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [cartCount, setCartCount] = useState(0)
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -122,81 +121,83 @@ export default function MenuPage() {
     product: (typeof products.sweet)[0]
     index: number
     delayOffset?: number
-  }) => (
-    <Link href={`/product/${product.id}`}>
-      <div
-        className="group cursor-pointer space-y-8"
-        onMouseEnter={() => setHoveredId(product.id)}
-        onMouseLeave={() => setHoveredId(null)}
-        style={{
-          animation: `slideInProduct 1s ease-out forwards`,
-          animationDelay: `${index * 0.2 + delayOffset}s`,
-          opacity: 0,
-        }}
-      >
+  }) => {
+    const [isHovered, setIsHovered] = useState(false)
+
+    return (
+      <Link href={`/product/${product.id}`}>
         <div
-          className="overflow-hidden rounded-lg relative group/image transition-all duration-500"
+          className="group cursor-pointer space-y-8"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           style={{
-            opacity: hoveredId === null || hoveredId === product.id ? 1 : 0.4,
+            animation: `slideInProduct 1s ease-out forwards`,
+            animationDelay: `${index * 0.2 + delayOffset}s`,
+            opacity: 0,
           }}
         >
-          <img
-            src={product.image || "/placeholder.svg"}
-            alt={product.name}
-            className="w-full h-80 md:h-96 object-cover transition-all duration-700 group-hover:scale-105"
-          />
-
-          {/* Warm glow on hover */}
-          {hoveredId === product.id && (
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          )}
-        </div>
-
-        {/* Product Info */}
-        <div className="space-y-3">
-          <h3 className="text-xl md:text-2xl font-heading font-light">{product.name}</h3>
-          <p className="text-base md:text-lg text-muted-foreground font-light">{product.price}</p>
-
-          <p 
-            className="text-sm text-muted-foreground font-light italic transition-opacity duration-300"
-            style={{
-              opacity: hoveredId === product.id ? 1 : 0,
-              visibility: hoveredId === product.id ? 'visible' : 'hidden'
-            }}
+          <div
+            className="overflow-hidden rounded-lg relative group/image transition-all duration-500"
           >
-            {product.tagline}
-          </p>
+            <img
+              src={product.image || "/placeholder.svg"}
+              alt={product.name}
+              className="w-full h-80 md:h-96 object-cover transition-all duration-700 group-hover:scale-105"
+            />
 
-          {product.scarcity && (
+            {/* Warm glow on hover */}
+            {isHovered && (
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            )}
+          </div>
+
+          {/* Product Info */}
+          <div className="space-y-3">
+            <h3 className="text-xl md:text-2xl font-heading font-light">{product.name}</h3>
+            <p className="text-base md:text-lg text-muted-foreground font-light">{product.price}</p>
+
             <p 
-              className="text-xs text-muted-foreground font-light pt-2 transition-opacity duration-300"
+              className="text-sm text-muted-foreground font-light italic transition-opacity duration-300"
               style={{
-                opacity: hoveredId === product.id ? 1 : 0,
-                visibility: hoveredId === product.id ? 'visible' : 'hidden'
+                opacity: isHovered ? 1 : 0,
+                height: isHovered ? 'auto' : '0',
               }}
             >
-              Only a few left.
+              {product.tagline}
             </p>
-          )}
-        </div>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            addToCart(product)
-          }}
-          className="text-primary font-light hover:text-primary/80 transition-all text-sm"
-          style={{
-            opacity: hoveredId === product.id ? 1 : 0,
-            visibility: hoveredId === product.id ? 'visible' : 'hidden',
-            pointerEvents: hoveredId === product.id ? 'auto' : 'none'
-          }}
-        >
-          Add to order →
-        </button>
-      </div>
-    </Link>
-  )
+            {product.scarcity && (
+              <p 
+                className="text-xs text-muted-foreground font-light transition-opacity duration-300"
+                style={{
+                  opacity: isHovered ? 1 : 0,
+                  height: isHovered ? 'auto' : '0',
+                }}
+              >
+                Only a few left.
+              </p>
+            )}
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              addToCart(product)
+            }}
+            className="text-primary font-light hover:text-primary/80 transition-all text-sm"
+            style={{
+              opacity: isHovered ? 1 : 0,
+              height: isHovered ? 'auto' : '0',
+              overflow: 'hidden',
+              pointerEvents: isHovered ? 'auto' : 'none'
+            }}
+          >
+            Add to order →
+          </button>
+        </div>
+      </Link>
+    )
+  }
 
   const CategorySection = ({
     emotion,
